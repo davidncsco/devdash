@@ -30,6 +30,10 @@
 
 It all started with Paul who suggested that we make something cool and fun for Cisco Live 2022, a scavenger hunt for example. A few months later, it became a full-blown web application with DevOps deployment interacting with IoT devices. Our first DevDash demo went live at Cisco Live 2022 Vegas. To accept the challenge, users are assigned to IoT race cars. Users take on the challenge to answer fun, developer, computer related multiple choice questions. Every time a user answers a question correctly, their car marches toward to the finish line. Answer the question incorrectly, and it sets the car backward. Race results are recorded and posted to the hall-of-fame leaderboard. Users with the fastest time may win some cool prizes at the event and of course, bragging rights.
 
+<p align="center"> 
+<img src="./images/devdash_quiz.png">
+</p>
+
 In a nutshell, DevDash is a fun project that showcases: 
 
 * Web application, web services using the F.A.R.M stack framework - FastAPI, ReactJS, and MongoDB
@@ -50,7 +54,7 @@ Let's start going through the process of how I put together all of the pieces th
 
 # Kubernetes cluster on Raspberry Pi
 
-I'll be walking you step by step on how I build this bare-metal 3-node Kubernetes cluster running on Raspberry Pis, the 4th Raspberry Pi on the cluster will be running as a Wifi router (routing traffic to the IoT race cars in the 10.20.x.x subnet) and MongoDB Database server for data persistence.
+I’ll be walking you step by step on how I build this bare-metal 3-node Kubernetes cluster running on Raspberry Pis, the 4th Raspberry Pi on the cluster will be running as a Wifi router (routing traffic to the IoT race cars in the 10.20.x.x subnet) and MongoDB Database server for data persistence.
 
 <p align="center"> 
 <img src="./images/picluster.jpg">
@@ -66,11 +70,11 @@ I'll be walking you step by step on how I build this bare-metal 3-node Kubernete
 - [Power Strip with USB C ports](https://www.amazon.com/gp/product/B07V32PJ59)
 - [USB Type C cables](https://www.amazon.com/gp/product/B08RYGCZ17)
 
-Initially, I wanted to power the Raspberry Pis with POE from the switch but adding the POE Hat to the Raspberry Pi make space really tie in the GeekPi case so I used power from USB C ports in the power strip instead. I think this option is a lot cheaper and simpler because you don't need to buy the POE Hat for the Raspberry Pi. I taped the mini switch on the side of the case for easy cable management. Because I used the bottom Raspberry Pi to power the cooling fan, I connected the USB C cable to a 9W adapter to make sure there is enough power to the fan. Assembling the cluster is pretty straight forward process and the instructions from Geekpi is easy to follow.
+Initially, I wanted to power the Raspberry Pis with Power Over Ethernet (POE) from the switch. Adding the POE Hat to the Raspberry Pi made space too tight in the GeekPi case, so I used power from USB C ports in the power strip instead. I think this option is a lot cheaper and simpler because you don’t need to buy the POE Hats for the Raspberry Pi. I taped the mini switch on the side of the case for easy cable management. I used the bottom Raspberry Pi to power the cooling fan, so I connected the USB C cable to a 9W adapter to make sure there is enough power for the fan. It is a straightforward process to assemble the cluster. The instructions from Geekpi are easy to follow.
 
 ## The base OSes
 
-I used [Raspberry Pi Imager](https://www.raspberrypi.com/news/raspberry-pi-imager-imaging-utility/) to flash all 4 of the Raspberry Pi SD cards with Ubuntu Server 20.04 LTS 64-bit (headless). I chose Ubuntu since it's well supported and I was pretty familiar with the OS. There may be newer, more stable Ubuntu releases by the time you read this. With the RP Imager utility, you can preset the hostname, enable SSH and set username and password, locale settings. I did not enable wireless lan during this process. I will describe the steps later how to enable wireless for one of the Pi and make it a Wifi router.
+I used [Raspberry Pi Imager](https://www.raspberrypi.com/news/raspberry-pi-imager-imaging-utility/) to flash all 4 of the Raspberry Pi SD cards with Ubuntu Server 20.04 LTS 64-bit (headless). I chose Ubuntu since it’s well supported and I was pretty familiar with the OS. There may be newer, more stable Ubuntu releases by the time you read this. With the RP Imager utility, you can preset the hostname, enable SSH and set username and password, locale settings. I did not enable wireless lan during this process. I will describe the steps later how to enable wireless for one of the Pi and make it a Wifi router.
 
 <p align="center"> 
 <img src="./images/rpimager.png">
@@ -85,8 +89,8 @@ I set the hostname for these Pis as follows:
 
 Please refer to the network diagram above for more information. With each node, I pre-configure them once it boots:
 
-- Hostname configured, SSH is enabled along with setting default username, password when flashing the SD card. This makes it easy to identify each node once it joins the network using my router admin interface.
-- Pre-authorize my SSH key with ssh-copy-id to facilitates automated, passwordless logins
+- Set the hostname, enable SSH, set default username, password when flashing the SD card. This makes it easy to identify each node once it joins the network using my router admin interface.
+- Pre-authorize my SSH key with ssh-copy-id to facilitates automated, password-less logins
 - [Configure sudo without password](https://linuxconfig.org/configure-sudo-without-password-on-ubuntu-20-04-focal-fossa-linux)
 - [Configure static IP address with netplan](https://linuxize.com/post/how-to-configure-static-ip-address-on-ubuntu-20-04/)
 
@@ -99,7 +103,7 @@ $ sudo apt update
 ``` 
 ## K3s Kubernetes
 
-At this time I am ready to install [K3S Kubernetes](https://k3s.io/) to the cluster. Why K3s? K3s is a lightweight Kubernetes distribution, optimized for ARM. It also features a simplified install and update process. K3s is also a highly available, certified Kubernetes distribution designed for production workloads in unattended, resource-constrained, remote locations or inside IoT appliances.
+Now I am ready to install [K3S Kubernetes](https://k3s.io/) to the cluster. Why K3s? K3s is a lightweight Kubernetes distribution, optimized for ARM. It also features a simplified install and update process. K3s is also a highly available, certified Kubernetes distribution designed for production workloads in unattended, resource-constrained, remote locations or inside IoT appliances.
 
 I use Docker to build and deploy containers to the K3s cluster so first I need to install the Docker engine to all nodes.
 
@@ -115,7 +119,7 @@ k3s-worker2   Ready    <none>                 94d   v1.22.7+k3s1
 k3s-worker1   Ready    <none>                 94d   v1.22.7+k3s1
 ``` 
 
-One of the cool features of K3s is that it includes traefik installed by default, so you don't need to install a bare-metal load-balancer, nor an ingress controller. Everything is included and ready for you to use!
+One of the cool features of K3s is that it includes traefik by default, so you don't need to install a bare-metal load-balancer, nor an ingress controller. Everything is included and ready for you to use!
 
 # Build DevDash web application containers
 
@@ -134,9 +138,9 @@ The webapp has 4 main components in the git repository:
 - *backend* - Backend services written in Python
 - *frontend* - Frontend GUI application written in Javascript with React JS library
 - *deployment* - YAML scripts to deploy app to Kubernetes cluster
-- *devrel500* - Python app using FastAPI and Freenov python library to process REST API routes sent from backend services and instructs IoT car to move.
+- *devrel500* - Python app using FastAPI and Freenove python library to process REST API routes sent from backend services to control the IoT race cars.
 
-_DevDash_ is composed by several different micro-services, developed in [ReactJS](https://reactjs.org/) + [Python](https://www.python.org), and packaged with Docker containers.  Basically it allows users to register and take on the challenge to answer fun, developer, computer related multiple choice questions. Once registered, a user will be assigned to the first available IoT race car from the pool. Each car has a colored flag attached to it.  Every time user answers a question correctly, their car will march toward to the finish line. Answer the question incorrectly will set the car backward.  Challenge is completed once their car reaches the finish line or when they answered all the questions (randomly generated from a pool of questions in the database). Their time will be recorded and posted to the leaderboard on a large display (another micro service written in Python, see backend component). User with the fastest time is on top of the leaderboard (and may win some cool prizes at the event)
+_DevDash_ is composed by several different micro-services, developed in [ReactJS](https://reactjs.org/) + [Python](https://www.python.org), and packaged with Docker containers.
 
 <p align="center"> 
 <img src="./images/devdash-demo.png">
@@ -150,8 +154,6 @@ To start building this microservices-based application, you will need to install
 - Visit [Node download](https://nodejs.org/en/download/) and follow instructions to install Node
 - I use [kubectl on mac](https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/) to install kubectl tool on my Mac. After the installation, copy /etc/rancher/k3s/k3s.yaml from primary node (k3s-primary) to ~/.kube/config on your workstation
 - I use Python 3.9.10 to build the backend micro-services but any python 3.x should be good. Visit [python](https://www.python.org/) to download and install Python.
-
-Please note that for this document I use a Mac and [iterm2](https://www.iterm2.com) but you should be able to use any other similar tool and obtain an equivalent output in your own system. For Windows you can use Command Prompt or PowerShell.
 
 All the required code to build your *DevDash* application is stored in [GitHub](https://github.com), a [repository hosting service](https://en.wikipedia.org/wiki/GitHub) that supports [Git Version Control System](https://en.wikipedia.org/wiki/Git). You can easily [register for a free GitHub account](https://github.com/join), and you will need to [install the Git CLI](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) in your workstation.
 
@@ -256,11 +258,11 @@ cd ../frontend
 
 Check out the code and resources in this directory that make up our Frontend UI for the webapp:
 
-- *src* - The React Front End javascript code.
-- *static/questions* - Database of questions used in the challenge. Each question is a PNG image.
+- *src* - The React Front End javascript source code.
+- *static/questions* - Database of questions used in the challenge. Each question is a PNG image. I added a few sample questions here.
 - *package.json* - store the metadata associated with the project as well as to store the list of dependency packages.
 
- Let examine the content of the Dockerfile used to build this component. Building the frontend image is a 2 stages process.  First, we use node to build the frontend Javascript application. Then, in the second stage, we package these scripts with nginx as our web server to run these Javascripts. Here I use API_URL to define Ingress public route for Traefik reverse proxy which I'll describe in more details in the deployment section. 
+ Let’s examine the content of the Dockerfile used to build this component. Building the frontend image is a 2-stage process. First, we use node to build the frontend Javascript application. Then, in the second stage, we package these scripts with nginx as our web server to run these Javascripts. Here I use API_URL to define Ingress public route for Traefik reverse proxy which I’ll describe in more details in the deployment section.
 
 ```Dockerfile
 # pull official base image
@@ -320,7 +322,7 @@ You will see output similar to this from docker buildx command:
  => => naming to docker.io/xitrum/frontend:3.0.1                      
 ```
 
-It took a little over 5 minutes to build the frontend image.  I also push this image to [Docker Hub](https://hub.docker.com/) along with the backend image.
+It takes a little over 5 minutes to build the frontend image.  I also push this image to [Docker Hub](https://hub.docker.com/) along with the backend image.
 
 ```shell
 docker push xitrum/frontend:3.0.1
@@ -340,7 +342,7 @@ Once the DB server is up and running, you can use any NoSQL client to connect to
 DB_URL="mongodb://davidn:ciscopsdt@10.0.0.60:27017/"
 ```
 
-Make sure that you enable the MongDB service at startup on the installed node *k3s-primary*
+Make sure that you enable the MongDB service at startup on the installed node.
 
 ```shell
 sudo systemctl enable mongodb.service
@@ -466,7 +468,7 @@ replicaset.apps/backend-8d65c8c86     2         2         2       26d
 replicaset.apps/frontend-67fd79cbcd   2         2         2       26d
 ```
 
-Execute this command Will give you more details about the path to backend and frontend services
+Execute this command will give you more details about the path to backend and frontend services
 
 ```shell
 kubectl get ingress
@@ -486,7 +488,7 @@ You can add these hosts and IPs entries to /etc/hosts on the local workstations 
 
 # Build IoT Race Cars
 
-The last piece of the puzzle is to build the IoT race cars and to communicate with them.  In the DevDash webapp, user must answer a series of questions to complete the challenge. Answer the question correctly, the car will march toward the finish line. Answer the question incorrectly will set the car backward. Players with the fastest times will appear in DevDash Hall-of-Fame Leaderboard.
+The last piece of the puzzle is to build the IoT race cars and to communicate with them. In the DevDash webapp, user must answer a series of questions to complete the challenge. Answer the question correctly, the car will march toward the finish line. Answer the question incorrectly will set the car backward. So there need to be some communication between the webapp and the IoT race cars.
 
 <p align="center"> 
 <img src="./images/racecar.png">
@@ -494,7 +496,7 @@ The last piece of the puzzle is to build the IoT race cars and to communicate wi
 
 The Freenove 4WD smart car kit are available on [Amazon](https://www.amazon.com/Freenove-Raspberry-Tracking-Avoidance-Ultrasonic/dp/B07YD2LT9D) and [Freenove](https://freenove.com) web site. Watch this [Youtube Video](https://www.youtube.com/watch?v=G3Q8xNatXgM) for instructions on how to assemble the IoT smart car. In this release of DevDash demo app, we don't use the camera servo so you can skip that part of the assembly. Maybe in the future release, we can utilize the camera and machine learning to do face or image recognition. That would be awesome and a lot more fun.
 
-We can attach either Raspberry Pi 3B+ and 4B (not included with the Freenove smart car) to the cars, as long as there are wireless lan for Wifi communication from our backend server.
+We can attach either Raspberry Pi 3B+ and 4B (not included with the Freenove smart car) to the cars, as long as it has wireless lan for Wifi communication from our backend server.
 
 ## Install base OS and configure the race car
 
@@ -526,7 +528,7 @@ static domain_name_servers=10.20.0.1 8.8.8.8
 
 ## Install web services and python library
 
-Reset power on the car to reboot the RPi. Raspian OS comes with Python 3.x by default, you only need to install some python modules required to run FastAPI web services.  Temporary connect the RPi ethernet port to your router so you have access to the internet to install dependency packages.
+Reset power on the car to reboot the RPi. Raspian OS comes with Python 3.x by default, you only need to install some python modules required to run FastAPI web services. Temporary connect the RPi ethernet port to your router so you have access to the internet to install dependency packages.
 
 The *devrel500* folder in the Git repository contains all the files you need for our python library.  Use *scp* to upload these files to the RPi default user home directory under a new folder name *devrel500*
 
