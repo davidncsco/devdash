@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="{{ url_for('template', path='/leaders.css') }}" rel="stylesheet">
+  <meta http-equiv="refresh" content="30">
+</head>
+<body>
+
+<div class="leaderboard">
+    <header>
+      <h1>LEADERBOARD</h1>
+      <img src="{{ url_for('template', path='/devvie.png') }}" alt="">
+    </header>
+    {{ data|safe }}
+</div>
+
+</body>
+</html>

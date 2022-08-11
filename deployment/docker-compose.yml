@@ -1,0 +1,33 @@
+version: "3"
+services:
+  react-app:
+    image: frontend
+    stdin_open: true
+    ports: 
+      - "3000:3000"
+    networks:
+      - farm-app
+    depends_on:
+      - backend
+  api-server:
+    image: backend
+    ports:
+      - "8000:8000"
+    networks:
+      - farm-app
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo:5.0-focal
+    ports:
+      - "27017:27017"
+    networks:
+      - farm-app
+    volumes:
+      - mongo-data:/data/db
+networks:
+  farm-app:
+    driver: bridge
+volumes:
+  mongo-data:
+    driver: local

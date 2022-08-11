@@ -1,0 +1,7 @@
+node_modules
+.dockerignore
+Dockerfile
+Dockerfile.prod
+package-lock.json
+.env.development
+yarn.lock

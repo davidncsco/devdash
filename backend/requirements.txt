@@ -1,0 +1,8 @@
+fastapi == 0.68.1
+uvicorn == 0.15.0
+motor == 2.4.0
+Jinja2==3.0.3
+aiofiles==0.8.0
+pandas==1.4.1
+httpx==0.22.0
+asyncio==3.4.3

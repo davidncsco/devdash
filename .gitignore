@@ -1,0 +1,6 @@
+frontend/yarn.lock
+frontend/package-lock.json
+frontend/public
+backend/__pycache__
+backend/test.py
+backend/backups

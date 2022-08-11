@@ -1,0 +1,13 @@
+[Unit]
+Description=Devrel 500 Race Car
+After=multi-user.target
+
+[Service]
+Type=idle
+User=pi
+ExecStart=/usr/bin/python /home/pi/devrel500/car.py
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target
