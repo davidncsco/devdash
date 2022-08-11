@@ -28,7 +28,7 @@
 
 # Introduction to DevDash Demo
 
-It all started with Paul who suggested that we make something cool and fun for Cisco Live 2022, a scavenger hunt for example. A few months later, it became a full-blown web application with DevOps deployment interacting with IoT devices. Our first DevDash demo went live at Cisco Live 2022 Vegas.
+It all started with Paul who suggested that we make something cool and fun for Cisco Live 2022, a scavenger hunt for example. A few months later, it became a full-blown web application with DevOps deployment interacting with IoT devices. Our first DevDash demo went live at Cisco Live 2022 Vegas. To accept the challenge, users are assigned to IoT race cars. Users take on the challenge to answer fun, developer, computer related multiple choice questions. Every time a user answers a question correctly, their car marches toward to the finish line. Answer the question incorrectly, and it sets the car backward. Race results are recorded and posted to the hall-of-fame leaderboard. Users with the fastest time may win some cool prizes at the event and of course, bragging rights.
 
 In a nutshell, DevDash is a fun project that showcases: 
 
@@ -121,7 +121,7 @@ One of the cool features of K3s is that it includes traefik installed by default
 
 ## High-level architecture
 
-All sources for this project are available in a github repository [here](https://github.com/davidncsco/CLUS-Challenge). I used the FARM stack to implement this demo because it seems like a good, full-stack framework for web application development. The basic framework of this web app can also be used as a template for almost any web application.
+All sources for this project are available in a github repository [here](https://github.com/davidncsco/devdash). I used the FARM stack to implement this demo because it seems like a good, full-stack framework for web application development. The basic framework of this web app can also be used as a template for almost any web application.
 
 Here is a high-level architecture of the DevDash demo app using the FARM stack
 
@@ -171,7 +171,7 @@ cd devdash
 Inside this new directory you will now clone the content from GitHub repositories (aka *repos*) that host all required code to build and deploy *devdash* containers.
 
 ```shell
-git clone https://github.com/davidncsco/CLUS-Challenge.git
+git clone https://github.com/davidncsco/devdash.git
 ```
 
 ## Build DevDash containers 
