@@ -2,8 +2,7 @@
 <h1 align="center">DevDash Demo</h1>
 
 <p align="center"> 
-<img src="./images/devdash_intro.png
-">
+<img src="./images/devdash_intro.png">
 </p>
 
 <!-- TOC -->
