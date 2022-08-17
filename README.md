@@ -542,13 +542,14 @@ Install all dependency python modules and enable the service at boot time. Becau
 ```shell
 cd devrel500
 sudo pip install -r requirements.txt
-sudo systemcl enable devrel500.service
+sudo systemctl enable devrel500.service
+sudo systemctl start devrel500.service
 ```
 
-You can check to see if the service is running after the service is enabled.
+You can check to see if the service is running after the service is enabled and started.
 
 ```shell
-sudo systemcl status devrel500.service
+sudo systemctl status devrel500.service
 ```
 
 Now the IoT smart car is ready to take command from the backend server.
